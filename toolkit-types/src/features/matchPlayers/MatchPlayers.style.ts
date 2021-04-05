@@ -39,3 +39,14 @@ export const TotalEvents = styled.div`
 export const TotalBtn = styled.button`
   margin: 0 10px;
 `
+
+export const PlayerOfTheGame = styled.p`
+  font-weight: bold;
+  color: red;
+  display:block;
+`
+
+export const PlayerOfTheGameWrapper = styled.div`
+display: flex;
+flex-flow: column;
+`

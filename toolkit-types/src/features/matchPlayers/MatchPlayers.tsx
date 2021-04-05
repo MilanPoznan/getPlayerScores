@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { PlayersWrapper, TotalEvents, PlayerTable, TeamNames, TeamStatistic, PlayerLabel, TotalBtn } from './MatchPlayers.style'
+import { PlayersWrapper, TotalEvents, PlayerTable, TeamNames, TeamStatistic, PlayerLabel, TotalBtn, PlayerOfTheGame, PlayerOfTheGameWrapper } from './MatchPlayers.style'
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { getPlayers, getTeams, onStart } from './matchPlayersSlice'
 import { PlayersStatistic, Player } from './matchPlayersSlice'
@@ -11,13 +11,9 @@ export default function MatchPlayers() {
   const [homeTeam, setHomeTeam] = useState('')
   const [awayTeam, setAwayTeam] = useState('')
   const [totalGls, setTotalGls] = useState([])
+  const [plrOfTheGame, setPlrOfTheGame] = useState([])
   const dispatch = useAppDispatch()
   const teamState = useAppSelector(state => state.reducer.playerReducer)
-
-  useEffect(() => {
-    dispatch(onStart())
-  }, [])
-
 
   function chechIsTeamOnTheTable(homeTeam: string, awayTeam: string): void {
 
@@ -78,7 +74,7 @@ export default function MatchPlayers() {
   const getMaxFromEntries = (arr: arrTest[], maxNum: number) => arr.reduce((acc: arrTest[], curr: arrTest) => {
     if (curr[1] > maxNum) {
       maxNum = curr[1]
-      acc = ['', 0]
+      acc = []
       acc.push(curr)
     } else if (curr[1] === maxNum) {
       acc.push(curr)
@@ -100,14 +96,18 @@ export default function MatchPlayers() {
 
   }, {})
 
-  function getPlayerOfTheGame(allPlayers: PlayersStatistic) {
+  function getPlayerOfTheGame(allPlayers: PlayersStatistic): void {
     const functionArr = [getObjval, findArrInArray, extractArrayFromArray, mergeTwoArraysFromArray, getOnlyPlayersFromArr, getPlayerWithEventPoints, makeEntriesFromObject, hofGetMaxFromEntries]
-    return functionArr.reduce((acc, curr) => curr(acc), allPlayers)
+    setPlrOfTheGame(functionArr.reduce((acc, curr) => curr(acc), allPlayers))
   }
 
   function getToalGoals(players: PlayersStatistic): void {
-    return setTotalGls([getObjval, findArrInArray, extractArrayFromArray, mergeTwoArraysFromArray, getGoalsFromArray].reduce((acc, curr) => curr(acc), players))
+    setTotalGls([getObjval, findArrInArray, extractArrayFromArray, mergeTwoArraysFromArray, getGoalsFromArray].reduce((acc, curr) => curr(acc), players))
   };
+
+  useEffect(() => {
+    dispatch(onStart())
+  }, [])
 
 
   return (
@@ -166,11 +166,14 @@ export default function MatchPlayers() {
               Cards
           </TotalBtn>
           </div>
-          <TotalBtn
-            onClick={() => getPlayerOfTheGame(teamState.players)}
-          >
-            Player of the game
-          </TotalBtn>
+          <PlayerOfTheGameWrapper>
+            <TotalBtn
+              onClick={() => getPlayerOfTheGame(teamState.players)}
+            >
+              Player of the game
+            </TotalBtn>
+            {plrOfTheGame.map(item => <PlayerOfTheGame>{item[0]}</PlayerOfTheGame>)}
+          </PlayerOfTheGameWrapper>
 
         </TotalEvents>
       </div>
